@@ -14,25 +14,25 @@
       <p class="subtitle">Edición inteligente para tus fotos</p>
 
       <div class="grid">
-        <button class="tile">✨<br>Quitar filtro</button>
-        <button class="tile">🎞️<br>Revelar negativos</button>
-        <button class="tile">🧑‍🎨<br>Restaurar foto dañada</button>
-        <button class="tile">🎨<br>Colorear B/N</button>
-        <button class="tile">🤳<br>Mejorar rostro</button>
-        <button class="tile">📸<br>Estilo vintage</button>
+        <button class="tile" onclick="applyFilter()">✨<br>Quitar filtro</button>
+        <button class="tile" onclick="notAvailable('revelar negativos')">📼<br>Revelar negativos</button>
+        <button class="tile" onclick="notAvailable('restaurar foto dañada')">👨‍🎨<br>Restaurar foto dañada</button>
+        <button class="tile" onclick="notAvailable('colorear B/N')">🎨<br>Colorear B/N</button>
+        <button class="tile" onclick="notAvailable('mejorar rostro')">💅<br>Mejorar rostro</button>
+        <button class="tile" onclick="notAvailable('estilo vintage')">📸<br>Estilo vintage</button>
       </div>
 
-      <input type="file" id="imageInput" accept="image/*" style="display:none;" />
+      <input type="file" id="imageInput" accept="image/*" />
 
-      <div id="previewContainer" class="preview-container" style="display:none;">
+      <div id="previewContainer" class="preview-container">
         <p>Vista previa:</p>
         <img id="previewImage" src="" alt="Vista previa" />
       </div>
 
-      <div id="resultContainer" class="preview-container" style="display:none;">
+      <div id="resultContainer" class="preview-container">
         <p>Resultado sin filtro:</p>
         <canvas id="resultCanvas"></canvas>
-        <a id="downloadBtn" class="tile" download="fixora-result.png" href="#">Descargar imagen</a>
+        <a id="downloadBtn" class="tile" download="fixora-result.png">Descargar imagen</a>
       </div>
     </div>
 
