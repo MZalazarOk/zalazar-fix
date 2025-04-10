@@ -1,17 +1,17 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#6C5CE7" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="stylesheet" href="./style.css" />
-    <title>Zalazar Fix</title>
+    <title>Fixora</title>
   </head>
   <body>
     <div class="container">
-      <h1>Zalazar Fix</h1>
-      <p class="subtitle">Zalazar + IA</p>
+      <h1>Fixora</h1>
+      <p class="subtitle">Edición inteligente para tus fotos</p>
       <div class="grid">
         <button class="tile">✨<br>Quitar filtro</button>
         <button class="tile">🎞️<br>Revelar negativos</button>
@@ -20,7 +20,14 @@
         <button class="tile">🤳<br>Mejorar rostro</button>
         <button class="tile">📸<br>Estilo vintage</button>
       </div>
+
+      <input type="file" id="imageInput" accept="image/*" style="display:none;" />
+      <div id="previewContainer" class="preview-container" style="display:none;">
+        <p>Vista previa:</p>
+        <img id="previewImage" src="" alt="Vista previa" />
+      </div>
     </div>
+
     <script src="./main.js"></script>
   </body>
 </html>
