@@ -12,6 +12,7 @@
     <div class="container">
       <h1>Fixora</h1>
       <p class="subtitle">Edición inteligente para tus fotos</p>
+
       <div class="grid">
         <button class="tile">✨<br>Quitar filtro</button>
         <button class="tile">🎞️<br>Revelar negativos</button>
@@ -22,6 +23,7 @@
       </div>
 
       <input type="file" id="imageInput" accept="image/*" style="display:none;" />
+
       <div id="previewContainer" class="preview-container" style="display:none;">
         <p>Vista previa:</p>
         <img id="previewImage" src="" alt="Vista previa" />
@@ -30,7 +32,7 @@
       <div id="resultContainer" class="preview-container" style="display:none;">
         <p>Resultado sin filtro:</p>
         <canvas id="resultCanvas"></canvas>
-        <a id="downloadBtn" class="tile" download="fixora-result.png" href="#">Descargar</a>
+        <a id="downloadBtn" class="tile" download="fixora-result.png" href="#">Descargar imagen</a>
       </div>
     </div>
 
