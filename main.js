@@ -43,11 +43,10 @@ window.addEventListener('DOMContentLoaded', () => {
           const data = imageData.data;
 
           for (let i = 0; i < data.length; i += 4) {
-            // Procesamiento para simular quitar filtro
+            // Simulación de quitar filtro (reduce saturación y limpia colores)
             const r = data[i];
             const g = data[i + 1];
             const b = data[i + 2];
-            // Promedio + baja saturación
             const avg = (r + g + b) / 3;
             data[i]     = r * 0.7 + avg * 0.3;
             data[i + 1] = g * 0.7 + avg * 0.3;
