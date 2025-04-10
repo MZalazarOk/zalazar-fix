@@ -1,0 +1,16 @@
+{
+  "name": "Zalazar Fix",
+  "short_name": "ZalazarFix",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "description": "Mini app para quitar filtros de fotos como 'Heahmund'.",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
