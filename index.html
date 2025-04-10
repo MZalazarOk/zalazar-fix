@@ -1,41 +1,56 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#6C5CE7" />
-  <link rel="manifest" href="./manifest.webmanifest" />
-  <link rel="stylesheet" href="./style.css" />
-  <title>Fixora</title>
-</head>
-<body>
-  <div class="container">
-    <h1>Fixora</h1>
-    <p class="subtitle">Edición inteligente para tus fotos</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#ffffff" />
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <title>Fixora</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Fixora</h1>
+      <p class="subtitle">Edición inteligente para tus fotos</p>
 
-    <div class="grid">
-      <button class="tile">✨<br>Quitar filtro</button>
-      <button class="tile" onclick="alert('Función no disponible')">📼<br>Revelar negativos</button>
-      <button class="tile" onclick="alert('Función no disponible')">🧑‍🎨<br>Restaurar foto dañada</button>
-      <button class="tile" onclick="alert('Función no disponible')">🎨<br>Colorear B/N</button>
-      <button class="tile" onclick="alert('Función no disponible')">💅<br>Mejorar rostro</button>
-      <button class="tile" onclick="alert('Función no disponible')">📸<br>Estilo vintage</button>
+      <div class="grid">
+        <button class="tile" onclick="processImage('quitar')">
+          <img src="icons/clean.png" class="icon" alt="" />
+          <span>Quitar filtro</span>
+        </button>
+        <button class="tile" onclick="showAlert('Revelar negativos')">
+          <img src="icons/film.png" class="icon" alt="" />
+          <span>Revelar negativos</span>
+        </button>
+        <button class="tile" onclick="showAlert('Restaurar foto dañada')">
+          <img src="icons/restore.png" class="icon" alt="" />
+          <span>Restaurar foto dañada</span>
+        </button>
+        <button class="tile" onclick="showAlert('Colorear B/N')">
+          <img src="icons/color.png" class="icon" alt="" />
+          <span>Colorear B/N</span>
+        </button>
+        <button class="tile" onclick="showAlert('Mejorar rostro')">
+          <img src="icons/face.png" class="icon" alt="" />
+          <span>Mejorar rostro</span>
+        </button>
+        <button class="tile" onclick="showAlert('Estilo vintage')">
+          <img src="icons/vintage.png" class="icon" alt="" />
+          <span>Estilo vintage</span>
+        </button>
+      </div>
+
+      <input type="file" id="imageInput" accept="image/*" />
+      <div class="preview-container">
+        <p>Vista previa:</p>
+        <img id="previewImage" src="#" alt="Vista previa" />
+      </div>
+      <div class="preview-container">
+        <p>Resultado sin filtro:</p>
+        <canvas id="resultCanvas"></canvas>
+        <a id="downloadBtn" class="download-btn" download="fixora-result.png">Descargar imagen</a>
+      </div>
     </div>
-
-    <input type="file" id="imageInput" accept="image/*" />
-
-    <div id="previewContainer" class="preview-container">
-      <p>Vista previa:</p>
-      <img id="previewImage" src="" alt="Vista previa" />
-    </div>
-
-    <div id="resultContainer" class="preview-container">
-      <p>Resultado sin filtro:</p>
-      <canvas id="resultCanvas"></canvas>
-      <a id="downloadBtn" class="tile" style="display:none;" download="fixora-result.png">Descargar imagen</a>
-    </div>
-  </div>
-
-  <script src="./main.js"></script>
-</body>
+    <script src="./main.js"></script>
+  </body>
 </html>
