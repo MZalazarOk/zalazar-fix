@@ -36,7 +36,6 @@ window.addEventListener('DOMContentLoaded', () => {
           previewImage.src = img.src;
           previewContainer.style.display = 'block';
 
-          // Procesamiento: simular quitar filtro
           resultCanvas.width = img.width;
           resultCanvas.height = img.height;
           const ctx = resultCanvas.getContext('2d');
