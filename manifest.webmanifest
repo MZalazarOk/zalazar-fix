@@ -1,0 +1,22 @@
+{
+  "name": "Fixora",
+  "short_name": "Fixora",
+  "description": "Edición inteligente de fotos: quita filtros y mejora imágenes.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f7f9fa",
+  "theme_color": "#4f46e5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "assets/icons/fixora-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/fixora-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
