@@ -15,11 +15,11 @@
 
     <div class="grid">
       <button class="tile">✨<br>Quitar filtro</button>
-      <button class="tile">📼<br>Revelar negativos</button>
-      <button class="tile">🧑‍🎨<br>Restaurar foto dañada</button>
-      <button class="tile">🎨<br>Colorear B/N</button>
-      <button class="tile">💅<br>Mejorar rostro</button>
-      <button class="tile">📸<br>Estilo vintage</button>
+      <button class="tile" onclick="alert('Función no disponible')">📼<br>Revelar negativos</button>
+      <button class="tile" onclick="alert('Función no disponible')">🧑‍🎨<br>Restaurar foto dañada</button>
+      <button class="tile" onclick="alert('Función no disponible')">🎨<br>Colorear B/N</button>
+      <button class="tile" onclick="alert('Función no disponible')">💅<br>Mejorar rostro</button>
+      <button class="tile" onclick="alert('Función no disponible')">📸<br>Estilo vintage</button>
     </div>
 
     <input type="file" id="imageInput" accept="image/*" />
@@ -32,10 +32,10 @@
     <div id="resultContainer" class="preview-container">
       <p>Resultado sin filtro:</p>
       <canvas id="resultCanvas"></canvas>
-      <a id="downloadBtn" class="tile" download="fixora-result.png">Descargar imagen</a>
+      <a id="downloadBtn" class="tile" style="display:none;" download="fixora-result.png">Descargar imagen</a>
     </div>
   </div>
 
-  <script type="module" src="./main.js"></script>
+  <script src="./main.js"></script>
 </body>
 </html>
