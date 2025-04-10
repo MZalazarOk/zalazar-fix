@@ -1,4 +1,3 @@
-// Registro del Service Worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js');
 }
@@ -8,6 +7,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const inputImagen = document.getElementById('imageInput');
   const previewContainer = document.getElementById('previewContainer');
   const previewImage = document.getElementById('previewImage');
+  const resultContainer = document.getElementById('resultContainer');
+  const resultCanvas = document.getElementById('resultCanvas');
+  const downloadBtn = document.getElementById('downloadBtn');
 
   botones.forEach(boton => {
     const texto = boton.innerText.split('\n')[1]?.toLowerCase();
@@ -26,8 +28,37 @@ window.addEventListener('DOMContentLoaded', () => {
     if (archivo) {
       const reader = new FileReader();
       reader.onload = function(event) {
-        previewImage.src = event.target.result;
-        previewContainer.style.display = 'block';
+        const img = new Image();
+        img.onload = function () {
+          previewImage.src = img.src;
+          previewContainer.style.display = 'block';
+
+          // Procesamiento en canvas
+          resultCanvas.width = img.width;
+          resultCanvas.height = img.height;
+          const ctx = resultCanvas.getContext('2d');
+          ctx.drawImage(img, 0, 0);
+
+          const imageData = ctx.getImageData(0, 0, img.width, img.height);
+          const data = imageData.data;
+
+          for (let i = 0; i < data.length; i += 4) {
+            // Procesamiento para simular quitar filtro
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            // Promedio + baja saturación
+            const avg = (r + g + b) / 3;
+            data[i]     = r * 0.7 + avg * 0.3;
+            data[i + 1] = g * 0.7 + avg * 0.3;
+            data[i + 2] = b * 0.7 + avg * 0.3;
+          }
+
+          ctx.putImageData(imageData, 0, 0);
+          resultContainer.style.display = 'block';
+          downloadBtn.href = resultCanvas.toDataURL('image/png');
+        };
+        img.src = event.target.result;
       };
       reader.readAsDataURL(archivo);
     }
