@@ -1,66 +1,74 @@
+import './style.css';
+
+document.querySelector('#app').innerHTML = `
+  <h1>Fixora</h1>
+  <p class="subtitle">Edición inteligente para tus fotos</p>
+`;
+
+// Registro del Service Worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js');
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  const botones = document.querySelectorAll('.tile');
-  const inputImagen = document.getElementById('imageInput');
-  const previewContainer = document.getElementById('previewContainer');
-  const previewImage = document.getElementById('previewImage');
-  const resultContainer = document.getElementById('resultContainer');
-  const resultCanvas = document.getElementById('resultCanvas');
-  const downloadBtn = document.getElementById('downloadBtn');
-
-  botones.forEach(boton => {
-    const textoCrudo = boton.innerText.split('\n');
-    const texto = textoCrudo[1] ? textoCrudo[1].trim().toLowerCase() : '';
-
-    boton.addEventListener('click', () => {
-      if (texto === "quitar filtro") {
-        inputImagen.click();
-      } else if (texto) {
-        alert(`Función "${texto}" aún no está activa`);
-      } else {
-        alert(`Este botón aún no está configurado`);
-      }
-    });
-  });
-
-  inputImagen.addEventListener('change', (e) => {
-    const archivo = e.target.files[0];
-    if (archivo) {
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const img = new Image();
-        img.onload = function () {
-          previewImage.src = img.src;
-          previewContainer.style.display = 'block';
-
-          resultCanvas.width = img.width;
-          resultCanvas.height = img.height;
-          const ctx = resultCanvas.getContext('2d');
-          ctx.drawImage(img, 0, 0);
-
-          const imageData = ctx.getImageData(0, 0, img.width, img.height);
-          const data = imageData.data;
-
-          for (let i = 0; i < data.length; i += 4) {
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            const avg = (r + g + b) / 3;
-            data[i]     = r * 0.7 + avg * 0.3;
-            data[i + 1] = g * 0.7 + avg * 0.3;
-            data[i + 2] = b * 0.7 + avg * 0.3;
-          }
-
-          ctx.putImageData(imageData, 0, 0);
-          resultContainer.style.display = 'block';
-          downloadBtn.href = resultCanvas.toDataURL('image/png');
-        };
-        img.src = event.target.result;
-      };
-      reader.readAsDataURL(archivo);
+// Lógica de botones
+const botones = document.querySelectorAll('.tile');
+botones.forEach(boton => {
+  boton.addEventListener('click', () => {
+    const texto = boton.innerText.trim();
+    if (texto.includes('Quitar filtro')) {
+      aplicarFiltro();
+    } else {
+      alert(`Función "${texto}" aún no está activa`);
     }
   });
 });
+
+const inputImagen = document.getElementById('imageInput');
+const previewImg = document.getElementById('previewImage');
+const resultCanvas = document.getElementById('resultCanvas');
+const downloadBtn = document.getElementById('downloadBtn');
+const ctx = resultCanvas.getContext('2d');
+
+inputImagen.addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    previewImg.src = event.target.result;
+    previewImg.onload = () => {
+      resultCanvas.width = previewImg.width;
+      resultCanvas.height = previewImg.height;
+      ctx.drawImage(previewImg, 0, 0);
+    };
+  };
+  reader.readAsDataURL(file);
+});
+
+function aplicarFiltro() {
+  if (!previewImg.src) {
+    alert('Primero subí una imagen.');
+    return;
+  }
+
+  resultCanvas.width = previewImg.width;
+  resultCanvas.height = previewImg.height;
+  ctx.drawImage(previewImg, 0, 0);
+
+  let imageData = ctx.getImageData(0, 0, resultCanvas.width, resultCanvas.height);
+  let data = imageData.data;
+
+  // Simulación de quitar filtros: ajuste de color
+  for (let i = 0; i < data.length; i += 4) {
+    // Promedio para desaturar colores
+    let avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+    data[i]     = avg + 10; // rojo
+    data[i + 1] = avg + 10; // verde
+    data[i + 2] = avg + 10; // azul
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+
+  // Actualizar enlace de descarga
+  downloadBtn.href = resultCanvas.toDataURL('image/png');
+}
