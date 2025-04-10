@@ -12,13 +12,16 @@ window.addEventListener('DOMContentLoaded', () => {
   const downloadBtn = document.getElementById('downloadBtn');
 
   botones.forEach(boton => {
-    const texto = boton.innerText.split('\n')[1]?.toLowerCase();
+    const textoCrudo = boton.innerText.split('\n');
+    const texto = textoCrudo[1] ? textoCrudo[1].trim().toLowerCase() : '';
 
     boton.addEventListener('click', () => {
       if (texto === "quitar filtro") {
         inputImagen.click();
-      } else {
+      } else if (texto) {
         alert(`Función "${texto}" aún no está activa`);
+      } else {
+        alert(`Este botón aún no está configurado`);
       }
     });
   });
@@ -33,7 +36,6 @@ window.addEventListener('DOMContentLoaded', () => {
           previewImage.src = img.src;
           previewContainer.style.display = 'block';
 
-          // Procesamiento en canvas
           resultCanvas.width = img.width;
           resultCanvas.height = img.height;
           const ctx = resultCanvas.getContext('2d');
@@ -43,7 +45,6 @@ window.addEventListener('DOMContentLoaded', () => {
           const data = imageData.data;
 
           for (let i = 0; i < data.length; i += 4) {
-            // Simulación de quitar filtro (reduce saturación y limpia colores)
             const r = data[i];
             const g = data[i + 1];
             const b = data[i + 2];
