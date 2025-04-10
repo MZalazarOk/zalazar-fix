@@ -1,5 +1,3 @@
-import './style.css';
-
 window.addEventListener('DOMContentLoaded', () => {
   const app = document.querySelector('#app');
   if (app) {
@@ -10,6 +8,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Registro del Service Worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('./service-worker.js');
 }
