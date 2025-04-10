@@ -1,74 +1,60 @@
+
 import './style.css';
 
-document.querySelector('#app').innerHTML = `
-  <h1>Fixora</h1>
-  <p class="subtitle">Edición inteligente para tus fotos</p>
-`;
-
-// Registro del Service Worker
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./service-worker.js');
-}
-
-// Lógica de botones
-const botones = document.querySelectorAll('.tile');
-botones.forEach(boton => {
-  boton.addEventListener('click', () => {
-    const texto = boton.innerText.trim();
-    if (texto.includes('Quitar filtro')) {
-      aplicarFiltro();
-    } else {
-      alert(`Función "${texto}" aún no está activa`);
-    }
-  });
-});
-
-const inputImagen = document.getElementById('imageInput');
-const previewImg = document.getElementById('previewImage');
+const imageInput = document.getElementById('imageInput');
+const previewImage = document.getElementById('previewImage');
 const resultCanvas = document.getElementById('resultCanvas');
 const downloadBtn = document.getElementById('downloadBtn');
-const ctx = resultCanvas.getContext('2d');
 
-inputImagen.addEventListener('change', (e) => {
-  const file = e.target.files[0];
+imageInput.addEventListener('change', (event) => {
+  const file = event.target.files[0];
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = (event) => {
-    previewImg.src = event.target.result;
-    previewImg.onload = () => {
-      resultCanvas.width = previewImg.width;
-      resultCanvas.height = previewImg.height;
-      ctx.drawImage(previewImg, 0, 0);
-    };
+  reader.onload = function (e) {
+    previewImage.src = e.target.result;
+    processImage(e.target.result);
   };
   reader.readAsDataURL(file);
 });
 
-function aplicarFiltro() {
-  if (!previewImg.src) {
-    alert('Primero subí una imagen.');
-    return;
-  }
+function processImage(imageSrc) {
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function () {
+    const canvas = resultCanvas;
+    const ctx = canvas.getContext('2d');
+    canvas.width = img.width;
+    canvas.height = img.height;
 
-  resultCanvas.width = previewImg.width;
-  resultCanvas.height = previewImg.height;
-  ctx.drawImage(previewImg, 0, 0);
+    // Dibujar imagen
+    ctx.drawImage(img, 0, 0);
 
-  let imageData = ctx.getImageData(0, 0, resultCanvas.width, resultCanvas.height);
-  let data = imageData.data;
+    // Sacar filtro: ajustar brillo, contraste, saturación, etc.
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
 
-  // Simulación de quitar filtros: ajuste de color
-  for (let i = 0; i < data.length; i += 4) {
-    // Promedio para desaturar colores
-    let avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
-    data[i]     = avg + 10; // rojo
-    data[i + 1] = avg + 10; // verde
-    data[i + 2] = avg + 10; // azul
-  }
+    // Algoritmo simple de desaturación y corrección de contraste
+    for (let i = 0; i < data.length; i += 4) {
+      const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
 
-  ctx.putImageData(imageData, 0, 0);
+      // Promedio con peso y normalización para quitar tintes
+      data[i]     = avg + (data[i] - avg) * 0.3; // R
+      data[i + 1] = avg + (data[i + 1] - avg) * 0.3; // G
+      data[i + 2] = avg + (data[i + 2] - avg) * 0.3; // B
+    }
 
-  // Actualizar enlace de descarga
-  downloadBtn.href = resultCanvas.toDataURL('image/png');
+    ctx.putImageData(imageData, 0, 0);
+
+    // Preparar botón de descarga
+    const dataURL = canvas.toDataURL('image/png');
+    downloadBtn.href = dataURL;
+    downloadBtn.download = 'fixora-result.png';
+  };
+  img.src = imageSrc;
+}
+
+// Registrar Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/service-worker.js');
 }
