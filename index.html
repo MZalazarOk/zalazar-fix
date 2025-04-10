@@ -1,41 +1,90 @@
-
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f7f9fa" />
-  <title>Fixora</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div class="container">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fixora</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+        margin: 0;
+        padding: 2rem;
+        background-color: #fff;
+        color: #000;
+        text-align: center;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+      .grid button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+        background-color: #f9f9f9;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+      }
+      .grid button:hover {
+        transform: scale(1.05);
+      }
+      .grid button img {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 0.5rem;
+      }
+      input[type="file"] {
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
     <h1>Fixora</h1>
-    <p class="subtitle">Edición inteligente para tus fotos</p>
+    <p>Edición inteligente para tus fotos</p>
+
     <div class="grid">
-      <button class="tile"><img src="assets/icons/clean.png" alt=""><br>Quitar filtro</button>
-      <button class="tile"><img src="assets/icons/film.png" alt=""><br>Revelar negativos</button>
-      <button class="tile"><img src="assets/icons/restore.png" alt=""><br>Restaurar foto dañada</button>
-      <button class="tile"><img src="assets/icons/color.png" alt=""><br>Colorear B/N</button>
-      <button class="tile"><img src="assets/icons/face.png" alt=""><br>Mejorar rostro</button>
-      <button class="tile"><img src="assets/icons/vintage.png" alt=""><br>Estilo vintage</button>
+      <button>
+        <img src="/zalazar-fix/assets/icons/clean.png" alt="Quitar filtro" />
+        Quitar filtro
+      </button>
+      <button>
+        <img src="/zalazar-fix/assets/icons/film.png" alt="Revelar negativos" />
+        Revelar negativos
+      </button>
+      <button>
+        <img src="/zalazar-fix/assets/icons/restore.png" alt="Restaurar foto dañada" />
+        Restaurar foto dañada
+      </button>
+      <button>
+        <img src="/zalazar-fix/assets/icons/color.png" alt="Colorear B/N" />
+        Colorear B/N
+      </button>
+      <button>
+        <img src="/zalazar-fix/assets/icons/face.png" alt="Mejorar rostro" />
+        Mejorar rostro
+      </button>
+      <button>
+        <img src="/zalazar-fix/assets/icons/vintage.png" alt="Estilo vintage" />
+        Estilo vintage
+      </button>
     </div>
 
-    <input type="file" id="imageInput" accept="image/*" />
-    
-    <div class="preview">
+    <input type="file" accept="image/*" />
+    <div>
       <p>Vista previa:</p>
-      <img id="previewImage" src="" alt="Vista previa" />
-    </div>
-
-    <div class="preview">
+      <img src="#" alt="Vista previa" id="preview" />
       <p>Resultado sin filtro:</p>
-      <canvas id="resultCanvas"></canvas>
+      <img src="#" alt="Resultado" id="result" />
     </div>
-
-    <a id="downloadBtn" class="download-button" download="fixora-result.png">Descargar imagen</a>
-  </div>
-
-  <script src="main.js"></script>
-</body>
+  </body>
 </html>
