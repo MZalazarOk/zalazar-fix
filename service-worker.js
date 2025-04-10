@@ -4,9 +4,9 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  console.log('Zalazar Fix activo');
+  console.log('Zalazar Fix activado');
 });
 
 self.addEventListener('fetch', event => {
-  // Estrategia simple para cache si querés después
+  event.respondWith(fetch(event.request));
 });
