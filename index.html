@@ -1,41 +1,42 @@
+
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#6C5CE7" />
-    <link rel="manifest" href="./manifest.webmanifest" />
-    <link rel="stylesheet" href="./style.css" />
-    <title>Fixora</title>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Fixora</h1>
-      <p class="subtitle">Edición inteligente para tus fotos</p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#6C5CE7" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="stylesheet" href="./style.css" />
+  <title>Fixora</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Fixora</h1>
+    <p class="subtitle">Edición inteligente para tus fotos</p>
 
-      <div class="grid">
-        <button class="tile" onclick="applyFilter()">✨<br>Quitar filtro</button>
-        <button class="tile" onclick="notAvailable('revelar negativos')">📼<br>Revelar negativos</button>
-        <button class="tile" onclick="notAvailable('restaurar foto dañada')">👨‍🎨<br>Restaurar foto dañada</button>
-        <button class="tile" onclick="notAvailable('colorear B/N')">🎨<br>Colorear B/N</button>
-        <button class="tile" onclick="notAvailable('mejorar rostro')">💅<br>Mejorar rostro</button>
-        <button class="tile" onclick="notAvailable('estilo vintage')">📸<br>Estilo vintage</button>
-      </div>
-
-      <input type="file" id="imageInput" accept="image/*" />
-
-      <div id="previewContainer" class="preview-container">
-        <p>Vista previa:</p>
-        <img id="previewImage" src="" alt="Vista previa" />
-      </div>
-
-      <div id="resultContainer" class="preview-container">
-        <p>Resultado sin filtro:</p>
-        <canvas id="resultCanvas"></canvas>
-        <a id="downloadBtn" class="tile" download="fixora-result.png">Descargar imagen</a>
-      </div>
+    <div class="grid">
+      <button class="tile" onclick="applyFix('quitarFiltro')">✨<br>Quitar filtro</button>
+      <button class="tile" onclick="alert('Función \"revelar negativos\" aún no está activa')">📼<br>Revelar negativos</button>
+      <button class="tile" onclick="alert('Función \"restaurar\" aún no está activa')">🧑‍🎨<br>Restaurar foto dañada</button>
+      <button class="tile" onclick="alert('Función \"colorear\" aún no está activa')">🎨<br>Colorear B/N</button>
+      <button class="tile" onclick="alert('Función \"mejorar rostro\" aún no está activa')">💅<br>Mejorar rostro</button>
+      <button class="tile" onclick="alert('Función \"vintage\" aún no está activa')">📸<br>Estilo vintage</button>
     </div>
 
-    <script src="./main.js"></script>
-  </body>
+    <input type="file" id="imageInput" accept="image/*" />
+
+    <div id="previewContainer" class="preview-container">
+      <p>Vista previa:</p>
+      <img id="previewImage" src="" alt="Vista previa" />
+    </div>
+
+    <div id="resultContainer" class="preview-container">
+      <p>Resultado sin filtro:</p>
+      <canvas id="resultCanvas"></canvas>
+      <a id="downloadBtn" class="tile" download="fixora-result.png">Descargar imagen</a>
+    </div>
+  </div>
+
+  <script src="./main.js"></script>
+</body>
 </html>
