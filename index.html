@@ -1,81 +1,89 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Fixora</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <style>
-      body {
-        font-family: sans-serif;
-        text-align: center;
-        padding: 2rem;
-      }
-      input,
-      button {
-        margin: 1rem;
-        padding: 0.7rem;
-        font-size: 1rem;
-      }
-      canvas {
-        max-width: 100%;
-        margin-top: 1rem;
-        border: 1px solid #ccc;
-      }
-      #status {
-        font-size: 0.9rem;
-        color: green;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Fixora</h1>
-    <p>Quitar filtro con IA (Replicate)</p>
+<head>
+  <meta charset="UTF-8" />
+  <title>Fixora con IA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+    }
+    input, button {
+      margin: 1rem;
+      padding: 0.7rem;
+      font-size: 1rem;
+    }
+    canvas {
+      max-width: 100%;
+      margin-top: 1rem;
+      border: 1px solid #ccc;
+    }
+    #status {
+      font-size: 0.9rem;
+      color: green;
+      margin-top: 1rem;
+    }
+    #error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fixora</h1>
+  <p>Quitar filtro con IA (Replicate)</p>
 
-    <input type="file" id="imageInput" accept="image/*" />
-    <br />
-    <button onclick="removeFilterWithIA()">Quitar filtro con IA</button>
-    <button onclick="downloadImage()">Descargar imagen</button>
-    <p id="status"></p>
-    <canvas id="canvas"></canvas>
+  <input type="file" id="imageInput" accept="image/jpeg,image/png" />
+  <br />
+  <button onclick="removeFilterWithIA()">Quitar filtro con IA</button>
+  <button onclick="downloadImage()">Descargar imagen</button>
 
-    <script type="module">
-      const imageInput = document.getElementById("imageInput");
-      const canvas = document.getElementById("canvas");
-      const ctx = canvas.getContext("2d");
-      const status = document.getElementById("status");
-      let imgBase64 = "";
+  <div id="status"></div>
+  <div id="error"></div>
 
-      const REPLICATE_API_KEY = import.meta.env.VITE_REPLICATE_API_KEY;
+  <canvas id="canvas"></canvas>
 
-      imageInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+  <script>
+    const imageInput = document.getElementById("imageInput");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const status = document.getElementById("status");
+    const error = document.getElementById("error");
+    let imgBase64 = "";
+    const replicateKey = "r8_WSpACZNDsIz9fN1PnlWtV5WbZpgaa8C2WdzbA";
 
-        const reader = new FileReader();
-        reader.onload = function (event) {
-          imgBase64 = event.target.result;
-          const img = new Image();
-          img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            status.textContent = "Imagen cargada.";
-          };
-          img.src = imgBase64;
+    imageInput.addEventListener("change", (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        imgBase64 = event.target.result;
+        const img = new Image();
+        img.onload = () => {
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          status.textContent = "Imagen cargada.";
+          error.textContent = "";
         };
-        reader.readAsDataURL(file);
-      });
+        img.src = imgBase64;
+      };
+      reader.readAsDataURL(file);
+    });
 
-      async function removeFilterWithIA() {
-        if (!imgBase64) {
-          status.textContent = "Primero cargá una imagen.";
-          return;
-        }
+    async function removeFilterWithIA() {
+      if (!imgBase64) {
+        error.textContent = "Primero cargá una imagen válida (.jpg o .png).";
+        return;
+      }
 
-        status.textContent = "Procesando con IA...";
-
+      try {
+        status.textContent = "Subiendo imagen...";
         const response = await fetch(imgBase64);
         const blob = await response.blob();
+
         const formData = new FormData();
         formData.append("file", blob, "image.png");
 
@@ -83,18 +91,25 @@
           method: "POST",
           body: formData,
         });
+
         const uploadData = await uploadRes.json();
         const imageURL = uploadData.data.url;
+
+        status.textContent = "Procesando con IA...";
 
         const replicateRes = await fetch("https://api.replicate.com/v1/predictions", {
           method: "POST",
           headers: {
-            Authorization: `Token ${REPLICATE_API_KEY}`,
+            Authorization: `Token ${replicateKey}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             version: "9286fbe6c552e7c87cfec830b560c60d21c56e4fa69f0f06f30e043e0f8d4f94",
-            input: { image: imageURL, scale: 2, face_enhance: false },
+            input: {
+              image: imageURL,
+              scale: 2,
+              face_enhance: false,
+            },
           }),
         });
 
@@ -102,15 +117,18 @@
         const predictionId = replicateData.id;
 
         let outputUrl = "";
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < 20; i++) {
           await new Promise((r) => setTimeout(r, 3000));
           const pollRes = await fetch(`https://api.replicate.com/v1/predictions/${predictionId}`, {
-            headers: { Authorization: `Token ${REPLICATE_API_KEY}` },
+            headers: { Authorization: `Token ${replicateKey}` },
           });
           const pollData = await pollRes.json();
+
           if (pollData.status === "succeeded") {
             outputUrl = pollData.output;
             break;
+          } else if (pollData.status === "failed") {
+            throw new Error("La IA falló en procesar la imagen.");
           }
         }
 
@@ -122,19 +140,24 @@
             canvas.height = finalImg.height;
             ctx.drawImage(finalImg, 0, 0);
             status.textContent = "IA aplicada con éxito.";
+            error.textContent = "";
           };
           finalImg.src = outputUrl;
         } else {
-          status.textContent = "Error: no se pudo procesar la imagen con IA.";
+          throw new Error("No se obtuvo una respuesta de la IA.");
         }
+      } catch (err) {
+        error.textContent = "Error: " + err.message;
+        status.textContent = "";
       }
+    }
 
-      function downloadImage() {
-        const link = document.createElement("a");
-        link.download = "fixora_sin_filtro.png";
-        link.href = canvas.toDataURL();
-        link.click();
-      }
-    </script>
-  </body>
+    function downloadImage() {
+      const link = document.createElement("a");
+      link.download = "fixora_sin_filtro.png";
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
 </html>
