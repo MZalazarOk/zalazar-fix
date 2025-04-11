@@ -22,6 +22,10 @@
         margin-top: 1rem;
         border: 1px solid #ccc;
       }
+      #status {
+        font-size: 0.9rem;
+        color: green;
+      }
     </style>
   </head>
   <body>
@@ -33,7 +37,8 @@
     <input type="text" id="filterName" placeholder="Nombre del filtro (opcional)" />
     <br />
     <button onclick="removeFilter()">Quitar filtro</button>
-    <br />
+    <button onclick="downloadImage()">Descargar imagen</button>
+    <p id="status"></p>
     <canvas id="canvas"></canvas>
 
     <script>
@@ -41,6 +46,7 @@
       const canvas = document.getElementById("canvas");
       const ctx = canvas.getContext("2d");
       const filterInput = document.getElementById("filterName");
+      const status = document.getElementById("status");
       let img = new Image();
 
       imageInput.addEventListener("change", (e) => {
@@ -53,6 +59,7 @@
             canvas.width = img.width;
             canvas.height = img.height;
             ctx.drawImage(img, 0, 0);
+            status.textContent = "Imagen cargada.";
           };
           img.src = event.target.result;
         };
@@ -67,11 +74,14 @@
       };
 
       function removeFilter() {
-        if (!img.src) return;
+        if (!img.src) {
+          status.textContent = "Primero cargá una imagen.";
+          return;
+        }
 
         ctx.drawImage(img, 0, 0);
-        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        let data = imageData.data;
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
 
         const name = filterInput.value.toLowerCase().trim();
         const preset = filterPresets[name] || { brightness: 1, contrast: 1, saturation: 1 };
@@ -82,7 +92,6 @@
           let b = data[i + 2] / 255;
 
           const avg = (r + g + b) / 3;
-
           r = avg + (r - avg) * (1 / preset.saturation);
           g = avg + (g - avg) * (1 / preset.saturation);
           b = avg + (b - avg) * (1 / preset.saturation);
@@ -101,6 +110,14 @@
         }
 
         ctx.putImageData(imageData, 0, 0);
+        status.textContent = `Filtro "${name || 'personalizado'}" eliminado.`;
+      }
+
+      function downloadImage() {
+        const link = document.createElement("a");
+        link.download = "fixora_sin_filtro.png";
+        link.href = canvas.toDataURL();
+        link.click();
       }
     </script>
   </body>
