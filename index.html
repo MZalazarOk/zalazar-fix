@@ -85,9 +85,9 @@
 
         const formData = new FormData();
         formData.append("file", imgBase64);
-        formData.append("upload_preset", "ml_default"); // preset público
+        formData.append("upload_preset", "Fixora");
 
-        const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/demo/image/upload", {
+        const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/duksx6hhz/image/upload", {
           method: "POST",
           body: formData,
         });
