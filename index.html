@@ -51,7 +51,7 @@
     const status = document.getElementById("status");
     const error = document.getElementById("error");
     let imgBase64 = "";
-    const replicateKey = "r8_WSpACZNDsIz9fN1PnlWtV5WbZpgaa8C2WdzbA";
+    const replicateKey = "r8_WSpACZNDsIz9fN1PnlWtV5WbZpgaa8C2WdzbA"; // tu clave
 
     imageInput.addEventListener("change", (e) => {
       const file = e.target.files[0];
@@ -117,7 +117,7 @@
         const predictionId = replicateData.id;
 
         let outputUrl = "";
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 30; i++) {
           await new Promise((r) => setTimeout(r, 3000));
           const pollRes = await fetch(`https://api.replicate.com/v1/predictions/${predictionId}`, {
             headers: { Authorization: `Token ${replicateKey}` },
@@ -125,7 +125,8 @@
           const pollData = await pollRes.json();
 
           if (pollData.status === "succeeded") {
-            outputUrl = pollData.output;
+            const output = pollData.output;
+            outputUrl = Array.isArray(output) ? output[0] : output;
             break;
           } else if (pollData.status === "failed") {
             throw new Error("La IA falló en procesar la imagen.");
