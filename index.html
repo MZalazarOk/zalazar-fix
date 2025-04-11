@@ -32,7 +32,7 @@
 </head>
 <body>
   <h1>Fixora</h1>
-  <p>Quitar filtro con IA (Replicate)</p>
+  <p>Quitar filtro con IA (Replicate + Cloudinary)</p>
 
   <input type="file" id="imageInput" accept="image/jpeg,image/png" />
   <br />
@@ -51,7 +51,7 @@
     const status = document.getElementById("status");
     const error = document.getElementById("error");
     let imgBase64 = "";
-    const replicateKey = "r8_WSpACZNDsIz9fN1PnlWtV5WbZpgaa8C2WdzbA"; // tu clave
+    const replicateKey = "r8_WSpACZNDsIz9fN1PnlWtV5WbZpgaa8C2WdzbA";
 
     imageInput.addEventListener("change", (e) => {
       const file = e.target.files[0];
@@ -80,20 +80,21 @@
       }
 
       try {
-        status.textContent = "Subiendo imagen...";
-        const response = await fetch(imgBase64);
-        const blob = await response.blob();
+        status.textContent = "Subiendo imagen a Cloudinary...";
+        error.textContent = "";
 
         const formData = new FormData();
-        formData.append("file", blob, "image.png");
+        formData.append("file", imgBase64);
+        formData.append("upload_preset", "ml_default"); // preset público
 
-        const uploadRes = await fetch("https://api.imgbb.com/1/upload?key=76d1a6db71f8cbf63a82c69a8cd95fd2", {
+        const cloudinaryRes = await fetch("https://api.cloudinary.com/v1_1/demo/image/upload", {
           method: "POST",
           body: formData,
         });
 
-        const uploadData = await uploadRes.json();
-        const imageURL = uploadData.data.url;
+        const cloudinaryData = await cloudinaryRes.json();
+        const imageURL = cloudinaryData.secure_url;
+        if (!imageURL) throw new Error("La subida a Cloudinary falló.");
 
         status.textContent = "Procesando con IA...";
 
@@ -141,7 +142,6 @@
             canvas.height = finalImg.height;
             ctx.drawImage(finalImg, 0, 0);
             status.textContent = "IA aplicada con éxito.";
-            error.textContent = "";
           };
           finalImg.src = outputUrl;
         } else {
