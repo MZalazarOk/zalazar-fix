@@ -2,89 +2,123 @@
 <html lang="es">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fixora</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style>
       body {
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
-        margin: 0;
+        font-family: -apple-system, sans-serif;
         padding: 2rem;
-        background-color: #fff;
-        color: #000;
+        background: #fff;
         text-align: center;
       }
-      h1 {
-        font-size: 2rem;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-        margin: 2rem 0;
-      }
-      .grid button {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem;
+      input[type="file"],
+      input[type="text"],
+      button {
+        margin: 1rem 0;
+        padding: 0.6rem 1rem;
         font-size: 1rem;
-        border: 1px solid #ccc;
-        border-radius: 12px;
-        background-color: #f9f9f9;
-        cursor: pointer;
-        transition: transform 0.2s ease;
       }
-      .grid button:hover {
-        transform: scale(1.05);
-      }
-      .grid button img {
-        width: 48px;
-        height: 48px;
-        margin-bottom: 0.5rem;
-      }
-      input[type="file"] {
+      canvas {
         margin-top: 1rem;
+        max-width: 100%;
       }
     </style>
   </head>
   <body>
     <h1>Fixora</h1>
-    <p>Edición inteligente para tus fotos</p>
+    <p>Quitá filtros de tus fotos con un solo toque</p>
 
-    <div class="grid">
-      <button>
-        <img src="/zalazar-fix/icons/clean.png" alt="Quitar filtro" />
-        Quitar filtro
-      </button>
-      <button>
-        <img src="/zalazar-fix/icons/film.png" alt="Revelar negativos" />
-        Revelar negativos
-      </button>
-      <button>
-        <img src="/zalazar-fix/icons/restore.png" alt="Restaurar foto dañada" />
-        Restaurar foto dañada
-      </button>
-      <button>
-        <img src="/zalazar-fix/icons/color.png" alt="Colorear B/N" />
-        Colorear B/N
-      </button>
-      <button>
-        <img src="/zalazar-fix/icons/face.png" alt="Mejorar rostro" />
-        Mejorar rostro
-      </button>
-      <button>
-        <img src="/zalazar-fix/icons/vintage.png" alt="Estilo vintage" />
-        Estilo vintage
-      </button>
-    </div>
+    <input type="file" id="imageInput" accept="image/*" />
+    <br />
+    <input type="text" id="filterName" placeholder="Nombre del filtro (opcional)" />
+    <br />
+    <button onclick="removeFilter()">Quitar filtro</button>
 
-    <input type="file" accept="image/*" />
-    <div>
-      <p>Vista previa:</p>
-      <img src="#" alt="Vista previa" id="preview" />
-      <p>Resultado sin filtro:</p>
-      <img src="#" alt="Resultado" id="result" />
-    </div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+      const imageInput = document.getElementById("imageInput");
+      const filterInput = document.getElementById("filterName");
+      const canvas = document.getElementById("canvas");
+      const ctx = canvas.getContext("2d");
+      let image = new Image();
+
+      imageInput.addEventListener("change", (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          image.onload = () => {
+            canvas.width = image.width;
+            canvas.height = image.height;
+            ctx.drawImage(image, 0, 0);
+          };
+          image.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      const filterPresets = {
+        // Instagram
+        heahmund: { brightness: 0.9, contrast: 0.85, saturation: 0.8 },
+        clarendon: { brightness: 0.95, contrast: 1.1, saturation: 1.2 },
+        juno: { brightness: 1.05, contrast: 1.15, saturation: 1.25 },
+
+        // VSCO
+        a4: { brightness: 0.92, contrast: 1.1, saturation: 0.9 },
+        m5: { brightness: 0.95, contrast: 1.05, saturation: 0.85 },
+
+        // Snapchat
+        vintage: { brightness: 1.1, contrast: 0.9, saturation: 0.6 },
+        glow: { brightness: 1.2, contrast: 1.1, saturation: 1.5 },
+      };
+
+      function removeFilter() {
+        if (!image.src) return;
+
+        const filter = filterInput.value.toLowerCase().trim();
+        const preset = filterPresets[filter] || { brightness: 1, contrast: 1, saturation: 1 };
+
+        // Dibujar imagen original
+        ctx.drawImage(image, 0, 0);
+
+        // Obtener imagen original
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        // Aplicar "quita filtro"
+        for (let i = 0; i < data.length; i += 4) {
+          // Convertir a HSL para trabajar mejor con saturación (simulación básica)
+          let r = data[i] / 255;
+          let g = data[i + 1] / 255;
+          let b = data[i + 2] / 255;
+
+          // Quitar saturación artificial (simplificada)
+          const avg = (r + g + b) / 3;
+
+          r = avg + (r - avg) * (1 / preset.saturation);
+          g = avg + (g - avg) * (1 / preset.saturation);
+          b = avg + (b - avg) * (1 / preset.saturation);
+
+          // Quitar contraste
+          r = (r - 0.5) * (1 / preset.contrast) + 0.5;
+          g = (g - 0.5) * (1 / preset.contrast) + 0.5;
+          b = (b - 0.5) * (1 / preset.contrast) + 0.5;
+
+          // Quitar brillo
+          r /= preset.brightness;
+          g /= preset.brightness;
+          b /= preset.brightness;
+
+          // Reconvertir a 0-255
+          data[i] = Math.min(255, Math.max(0, r * 255));
+          data[i + 1] = Math.min(255, Math.max(0, g * 255));
+          data[i + 2] = Math.min(255, Math.max(0, b * 255));
+        }
+
+        ctx.putImageData(imageData, 0, 0);
+      }
+    </script>
   </body>
 </html>
